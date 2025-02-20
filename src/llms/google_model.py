@@ -68,7 +68,7 @@ class GoogleModel(LLM):
 
             return response, parse_json_string(response)
         except (ValueError, JSONDecodeError) as e:
-            logger.warning(f"Gemini 1.0 Pro response could not be decoded as JSON: {str(e)}")
+            logger.warning(f"Gemini Model: {self.model_name} response could not be decoded as JSON: {str(e)}")
             raise e
         except (ServiceUnavailable, InternalServerError, TooManyRequests, DeadlineExceeded) as e:
             logger.warning(f"Gemini 1.0 Pro API error: {e}")
@@ -87,4 +87,4 @@ class GoogleModel(LLM):
         return self.generate_content(ctx, retry_history)
 
     def __str__(self):
-        return f"GeminiOnePro(model_name={self.model_name}, max_tokens={self.max_tokens})"
+        return f"Gemini(model_name={self.model_name}, max_tokens={self.max_tokens})"

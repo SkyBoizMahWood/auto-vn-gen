@@ -62,11 +62,13 @@ class GoogleModel(LLM):
             copied_messages = copied_messages + map_openai_history_to_google_history([last_message])
             prompt_tokens = self.count_token(self.get_history_message(copied_messages))
             response_tokens = self.count_token(response)
+            
+            parsed_response = parse_json_string(response)
 
             ctx.append_response_to_file(self.model_name, response, prompt_tokens, response_tokens)
             ctx.append_history_to_file(map_google_history_to_openai_history(copied_messages))
 
-            return response, parse_json_string(response)
+            return response, parsed_response
         except (ValueError, JSONDecodeError) as e:
             logger.warning(f"Gemini Model: {self.model_name} response could not be decoded as JSON: {str(e)}")
             raise e

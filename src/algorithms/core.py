@@ -29,17 +29,35 @@ def initialize_generation(ctx: GenerationContext):
         file.write(json.dumps({"histories": [history]}, indent=2))
 
     if not ctx.config.existing_plot:
-        story_data_raw, story_data_obj = ctx.generation_model.generate_content(ctx, history)
+        max_retry_attempts = 10
+        has_generation_success, current_attempt = False, 0
+        story_data_raw, story_data_obj = None, None
+        while not has_generation_success and current_attempt < max_retry_attempts:
+            try:
+                story_data_raw, story_data_obj = ctx.generation_model.generate_content(ctx, history)
+                has_generation_success = True
+            except Exception as e:
+                current_attempt += 1
+                logger.warning(f"Exception occurred while chat completion: {e}")
+                logger.warning(f"Retry {current_attempt}/{max_retry_attempts}")
+    
+        if not has_generation_success or story_data_raw is None or story_data_obj is None:
+            logger.error(f"Failed to generate story data.")
+            logger.error("Exiting...")
+            exit(1)
     else:
         with open(ctx.config.existing_plot, "r") as file:
             content = json.load(file)
             story_data_raw = content["raw"]
             story_data_obj = content["parsed"]
-
-    story_data_obj["id"] = ctx.story_id
-    story_data_obj["generated_by"] = os.getenv("GENERATION_MODEL")
-    story_data_obj["approach"] = ctx.approach
-    story_data = StoryData.from_json(story_data_obj)
+    try:
+        story_data_obj["id"] = ctx.story_id
+        story_data_obj["generated_by"] = os.getenv("GENERATION_MODEL")
+        story_data_obj["approach"] = ctx.approach
+        story_data = StoryData.from_json(story_data_obj)
+    except Exception as e:
+        logger.warning("Can not load json parsed from response. Retrying generate story data...")
+        return initialize_generation(ctx)
 
     if ctx.config.enable_image_generation and not ctx.config.existing_plot:
         logger.debug("Start character image generation")

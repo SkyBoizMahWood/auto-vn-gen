@@ -30,7 +30,7 @@ def process_generation_queue(ctx: GenerationContext, story_data: StoryData):
         history = append_openai_message(prompt, history=history)
 
         # Retry chunk generation if failed
-        max_retry_attempts = 3
+        max_retry_attempts = 10
         has_chunk_generation_success, current_attempt = False, 0
         current_chunk, story_chunk_raw = None, None
         while not has_chunk_generation_success and current_attempt < max_retry_attempts:
@@ -45,6 +45,7 @@ def process_generation_queue(ctx: GenerationContext, story_data: StoryData):
             except Exception as e:
                 current_attempt += 1
                 logger.warning(f"Exception occurred while chat completion: {e}")
+                logger.warning(f"Retry {current_attempt}/{max_retry_attempts}")
 
         if not has_chunk_generation_success or current_chunk is None or story_chunk_raw is None:
             logger.error(f"Failed to generate story chunk.")

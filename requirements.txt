@@ -17,3 +17,4 @@ anthropic~=0.19.1
 accelerate~=0.27.2
 transformers~=4.38.2
 peft~=0.9.0
+json_repair

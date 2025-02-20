@@ -21,7 +21,13 @@ from ..utils.openai_ai import append_openai_message
 class GoogleModel(LLM):
     def __init__(self, model_name: str, max_tokens: int = 32768):
         super().__init__(max_tokens)
-        genai.configure(api_key=os.environ["GOOGLE_AI_API_KEY"])
+        api_keys_str = os.environ.get("GOOGLE_AI_API_KEY", "")
+        self.api_keys = api_keys_str.split(",") if api_keys_str else []
+        if not self.api_keys:
+            raise ValueError("GOOGLE_AI_API_KEY environment variable not set or empty")
+        logger.debug(f"Google API keys: {self.api_keys}")
+        self.current_key_index = 0
+        genai.configure(api_key=self.api_keys[self.current_key_index])
         self.model_name = model_name
         self.client = genai.GenerativeModel(self.model_name)
 
@@ -62,16 +68,23 @@ class GoogleModel(LLM):
             copied_messages = copied_messages + map_openai_history_to_google_history([last_message])
             prompt_tokens = self.count_token(self.get_history_message(copied_messages))
             response_tokens = self.count_token(response)
+            
+            parsed_response = parse_json_string(response)
 
             ctx.append_response_to_file(self.model_name, response, prompt_tokens, response_tokens)
             ctx.append_history_to_file(map_google_history_to_openai_history(copied_messages))
 
-            return response, parse_json_string(response)
+            return response, parsed_response
         except (ValueError, JSONDecodeError) as e:
-            logger.warning(f"Gemini 1.0 Pro response could not be decoded as JSON: {str(e)}")
+            logger.warning(f"Gemini Model: {self.model_name} response could not be decoded as JSON: {str(e)}")
             raise e
         except (ServiceUnavailable, InternalServerError, TooManyRequests, DeadlineExceeded) as e:
-            logger.warning(f"Gemini 1.0 Pro API error: {e}")
+            logger.warning(f"Gemini Model: {self.model_name} API error: {e}")
+            # Switch to next API key
+            self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
+            genai.configure(api_key=self.api_keys[self.current_key_index])
+            self.client = genai.GenerativeModel(self.model_name)
+            logger.warning(f"Switched to API key index {self.current_key_index}")
             sleep(3)
             return self.generate_content(ctx, messages)
         except Exception as e:
@@ -87,4 +100,4 @@ class GoogleModel(LLM):
         return self.generate_content(ctx, retry_history)
 
     def __str__(self):
-        return f"GeminiOnePro(model_name={self.model_name}, max_tokens={self.max_tokens})"
+        return f"Gemini(model_name={self.model_name}, max_tokens={self.max_tokens})"

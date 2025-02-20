@@ -47,11 +47,13 @@ class OpenAIModel(LLM):
             response = chat_completion.choices[0].message.content.strip()
             prompt_tokens = chat_completion.usage.prompt_tokens
             completion_tokens = chat_completion.usage.completion_tokens
+            
+            parsed_response = parse_json_string(response)
 
             ctx.append_response_to_file(self.model_name, response, prompt_tokens, completion_tokens)
             ctx.append_history_to_file(copied_messages)
 
-            return response, parse_json_string(response)
+            return response, parsed_response
         except (ValueError, JSONDecodeError) as e:
             logger.warning(f"OpenAI API response could not be decoded as JSON: {str(e)}")
             raise e

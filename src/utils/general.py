@@ -1,5 +1,5 @@
 import base64
-import json
+import json_repair
 import re
 from io import BytesIO
 
@@ -8,7 +8,7 @@ from PIL import Image
 
 def parse_json_string(json_string: str) -> dict:
     if json_string.startswith("{") and json_string.endswith("}"):
-        return json.loads(json_string)
+        return json_repair.loads(json_string)
 
     pattern = r'```(json)?\n([\s\S]*?)(?<!`)```'
     match = re.findall(pattern, json_string, re.DOTALL)
@@ -18,7 +18,7 @@ def parse_json_string(json_string: str) -> dict:
             "JSON markdown block not found in the message. Please use the following format:\n```json\n{...}\n```")
 
     json_string = match[-1][-1].strip()
-    return json.loads(json_string)
+    return json_repair.loads(json_string)
 
 
 def get_image_from_base64(b64: str) -> Image:

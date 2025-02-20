@@ -15,7 +15,8 @@ class Bria(BackgroundRemovalModel):
         model_path = hf_hub_download("briaai/RMBG-1.4", 'model.pth')
 
         if torch.cuda.is_available():
-            self.model.load_state_dict(torch.load(model_path)).cuda()
+            self.model.load_state_dict(torch.load(model_path))
+            self.model = self.model.cuda()
         elif torch.backends.mps.is_available():
             self.model.load_state_dict(torch.load(model_path, map_location="mps"))
         else:

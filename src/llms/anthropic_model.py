@@ -43,11 +43,13 @@ class AnthropicModel(LLM):
             response = chat_completion.content[0].text.strip()
             input_tokens = chat_completion.usage.input_tokens
             output_tokens = chat_completion.usage.output_tokens
+            
+            parsed_response = parse_json_string(response)
 
             ctx.append_response_to_file(self.model_name, response, input_tokens, output_tokens)
             ctx.append_history_to_file(copied_messages)
 
-            return response, parse_json_string(response)
+            return response, parsed_response
         except (ValueError, JSONDecodeError) as e:
             logger.warning(f"Anthropic response could not be decoded as JSON: {str(e)}")
             raise e

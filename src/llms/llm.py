@@ -42,7 +42,7 @@ class LLM(ABC):
             for idx in range(start_idx, 3, -2):
                 if history[idx]["role"] != "assistant" or history[idx - 1]["role"] != "user":
                     raise ValueError(f"History is not in the correct conversation format: "
-                                     f"{history[idx]["role"]} {history[idx - 1]["role"]}")
+                                     f"{history[idx]['role']} {history[idx - 1]['role']}")
 
                 assistant_message = history[idx]
                 user_message = history[idx - 1]

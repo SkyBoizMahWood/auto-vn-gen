@@ -1,7 +1,7 @@
 services:
-  story-branching:
+  vn-database:
     image: neo4j:5.18.0-community
-    container_name: story-branching
+    container_name: vn-database
     ports:
       - "7474:7474"
       - "7687:7687"

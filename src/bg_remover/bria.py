@@ -20,7 +20,7 @@ class Bria(BackgroundRemovalModel):
         elif torch.backends.mps.is_available():
             self.model.load_state_dict(torch.load(model_path, map_location="mps"))
         else:
-            self.model.load_state_dict(torch.load(model_path, map_location="cpu"))
+            self.model.load_state_dict(torch.load(model_path, map_location="cpu", weights_only=True))
         self.model.eval()
 
     def remove_background(self, image: Image) -> Image:

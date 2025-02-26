@@ -1,4 +1,4 @@
-from google.ai.generativelanguage_v1beta.types.content import Content, Part
+from google.genai.types import Content, Part
 
 from src.types.openai import ConversationHistory, OpenAIRole
 

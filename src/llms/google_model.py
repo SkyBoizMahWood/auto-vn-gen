@@ -59,26 +59,29 @@ class GoogleModel(LLM):
         try:
             chat_completion = chat.send_message(message=current_message,
                                                 config=types.GenerateContentConfig(
+                                                    temperature=1.5,
+                                                    top_k=1,
+                                                    top_p=0.9,
                                                     safety_settings=[
                                                         types.SafetySetting(
                                                             category=HarmCategory.HARM_CATEGORY_HARASSMENT,
-                                                            threshold=HarmBlockThreshold.BLOCK_NONE
+                                                            threshold=HarmBlockThreshold.OFF
                                                         ),
                                                         types.SafetySetting(
                                                             category=HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-                                                            threshold=HarmBlockThreshold.BLOCK_NONE
+                                                            threshold=HarmBlockThreshold.OFF
                                                         ),
                                                         types.SafetySetting(
                                                             category=HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-                                                            threshold=HarmBlockThreshold.BLOCK_NONE
+                                                            threshold=HarmBlockThreshold.OFF
                                                         ),
                                                         types.SafetySetting(
                                                             category=HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-                                                            threshold=HarmBlockThreshold.BLOCK_NONE
+                                                            threshold=HarmBlockThreshold.OFF
                                                         ),
                                                         types.SafetySetting(
                                                             category=HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY,
-                                                            threshold=HarmBlockThreshold.BLOCK_NONE
+                                                            threshold=HarmBlockThreshold.OFF
                                                         ),
                                                     ]
                                                 ))

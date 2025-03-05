@@ -17,7 +17,7 @@ class TunedLlamaModel(LLM):
         self.model_name = model_name
         from unsloth import FastLanguageModel
         model, tokenizer = FastLanguageModel.from_pretrained(
-            model_name = "models/LLAMA_VN_model", # YOUR MODEL YOU USED FOR TRAINING
+            model_name = "Soraki5th/auto-vn-gen-llama-8b-v2", # YOUR MODEL YOU USED FOR TRAINING
             max_seq_length = 32768,
             dtype = None,
             load_in_4bit = True,

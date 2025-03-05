@@ -10,6 +10,7 @@ from src.llms.google_model import GoogleModel
 from src.llms.llm import LLM
 from src.llms.openai_model import OpenAIModel
 from src.llms.tuned_llama_model import TunedLlamaModel
+from src.llms.tuned_llama_model_vllm import TunedLlamaModelVLLM
 
 MAX_TOKENS = {
     'gpt-3.5-turbo-0125': 16385,
@@ -24,6 +25,7 @@ MAX_TOKENS = {
     'claude-3-sonnet-20240229': 200000,
     'claude-2.1': 200000,
     'tuned-llama-8b': 32768,
+    'tuned-llama-8b-vllm': 32768,
 }
 
 
@@ -44,6 +46,9 @@ def get_generation_model(model_name: str, seed: Optional[int]) -> LLM:
     elif model_name in ["tuned-llama-8b"]:
         max_tokens = MAX_TOKENS[model_name]
         return TunedLlamaModel(model_name, max_tokens)
+    elif model_name in ["tuned-llama-8b-vllm"]:
+        max_tokens = MAX_TOKENS[model_name]
+        return TunedLlamaModelVLLM(model_name, max_tokens)
     else:
         raise ValueError(f"Unknown generation model: {model_name}")
 

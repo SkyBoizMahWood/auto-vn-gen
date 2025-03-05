@@ -29,3 +29,5 @@ REM python main.py generate-story --game-genre "japanese visual novel" --num-cha
 REM python main.py generate-story --game-genre "japanese visual novel" --num-chapters 2 --num-endings 10 --num-main-characters 10 --num-main-scenes 10 --min-num-choices 3 --max-num-choices 3 --min-num-choices-opportunity 1 --max-num-choices-opportunity 1 --themes "romance" --themes "comedy" --themes "drama"
 
 REM python main.py generate-story --num-chapters 3 --min-num-choices 2 --max-num-choices 3 --min-num-choices-opportunity 1 --max-num-choices-opportunity 1 --themes "romance" --themes "comedy" --themes "drama"
+
+REM python main.py generate-story --num-chapters 3 --min-num-choices 2 --max-num-choices 3 --min-num-choices-opportunity 1 --max-num-choices-opportunity 1 --themes "adventure" --themes "high-fantasy" --themes "science fiction"

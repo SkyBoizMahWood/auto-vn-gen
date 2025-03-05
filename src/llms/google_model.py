@@ -3,10 +3,11 @@ import os
 from json import JSONDecodeError
 from time import sleep
 
-import google.generativeai as genai
-from google.ai.generativelanguage_v1beta import Content
-from google.api_core.exceptions import ServiceUnavailable, InternalServerError, TooManyRequests, DeadlineExceeded
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
+from google import genai
+from google.genai import types
+from google.genai.types import Content
+from google.genai.errors import APIError
+from google.genai.types import HarmCategory, HarmBlockThreshold
 from loguru import logger
 
 from src.llms.llm import LLM
@@ -27,12 +28,12 @@ class GoogleModel(LLM):
             raise ValueError("GOOGLE_AI_API_KEY environment variable not set or empty")
         logger.debug(f"Google API keys: {self.api_keys}")
         self.current_key_index = 0
-        genai.configure(api_key=self.api_keys[self.current_key_index])
         self.model_name = model_name
-        self.client = genai.GenerativeModel(self.model_name)
+        self.client = genai.Client(
+            api_key=self.api_keys[self.current_key_index], http_options=types.HttpOptions(api_version='v1alpha'))
 
     def count_token(self, message: str) -> int:
-        count = genai.GenerativeModel(self.model_name).count_tokens(message).total_tokens
+        count = self.client.models.count_tokens(model=self.model_name, contents=message).total_tokens
         return count
 
     @staticmethod
@@ -53,15 +54,37 @@ class GoogleModel(LLM):
         current_message = last_message.get("content")
 
         copied_messages = map_openai_history_to_google_history(copied_messages)
-        chat = self.client.start_chat(history=copied_messages)
+        chat = self.client.chats.create(model=self.model_name, history=copied_messages)
 
         try:
-            chat_completion = chat.send_message(current_message, safety_settings={
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE
-            })
+            chat_completion = chat.send_message(message=current_message,
+                                                config=types.GenerateContentConfig(
+                                                    temperature=1.5,
+                                                    top_k=1,
+                                                    top_p=0.9,
+                                                    safety_settings=[
+                                                        types.SafetySetting(
+                                                            category=HarmCategory.HARM_CATEGORY_HARASSMENT,
+                                                            threshold=HarmBlockThreshold.OFF
+                                                        ),
+                                                        types.SafetySetting(
+                                                            category=HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                                                            threshold=HarmBlockThreshold.OFF
+                                                        ),
+                                                        types.SafetySetting(
+                                                            category=HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                                                            threshold=HarmBlockThreshold.OFF
+                                                        ),
+                                                        types.SafetySetting(
+                                                            category=HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                                                            threshold=HarmBlockThreshold.OFF
+                                                        ),
+                                                        types.SafetySetting(
+                                                            category=HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY,
+                                                            threshold=HarmBlockThreshold.OFF
+                                                        ),
+                                                    ]
+                                                ))
 
             response = chat_completion.text.strip()
 
@@ -78,12 +101,12 @@ class GoogleModel(LLM):
         except (ValueError, JSONDecodeError) as e:
             logger.warning(f"Gemini Model: {self.model_name} response could not be decoded as JSON: {str(e)}")
             raise e
-        except (ServiceUnavailable, InternalServerError, TooManyRequests, DeadlineExceeded) as e:
+        except (APIError) as e:
             logger.warning(f"Gemini Model: {self.model_name} API error: {e}")
             # Switch to next API key
             self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
-            genai.configure(api_key=self.api_keys[self.current_key_index])
-            self.client = genai.GenerativeModel(self.model_name)
+            self.client = genai.Client(
+                api_key=self.api_keys[self.current_key_index], http_options=types.HttpOptions(api_version='v1alpha'))
             logger.warning(f"Switched to API key index {self.current_key_index}")
             sleep(3)
             return self.generate_content(ctx, messages)

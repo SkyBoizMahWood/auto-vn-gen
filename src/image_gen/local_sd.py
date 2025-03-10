@@ -35,7 +35,7 @@ class LocalStableDiffusionModel(ImageGenModel):
             "negative_prompt": get_negative_image_prompt(),
             "width": size[shape]["width"],
             "height": size[shape]["height"],
-            "steps": 30
+            "steps": 150
         })
 
         return response.json().get("images")[0]

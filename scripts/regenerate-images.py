@@ -47,7 +47,7 @@ def _run_regenerate_images(session, story_id: str, for_characters: bool, for_sce
                     id=result.get('n').get('id'),
                     main_scenes=json.dumps(main_scenes))
 
-    context_file = Path("../outputs") / result.get('n').get('approach') / result.get('n').get('id') / "context.json"
+    context_file = Path("./outputs") / result.get('n').get('approach') / result.get('n').get('id') / "context.json"
     with open(context_file, 'r') as file:
         context = json.load(file)
         context['image_generation_model'] = str(img_gen)

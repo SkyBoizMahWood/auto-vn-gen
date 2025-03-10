@@ -22,7 +22,7 @@ def get_character_image_prompt(character: CharacterData) -> str:
         species=character.species,
         gender=character.gender,
         age=character.age,
-        physical_appearance=" and ".join(character.physical_appearance)
+        physical_appearance=" and ".join(character.physical_appearance) if isinstance(character.physical_appearance, list) and all(isinstance(item, str) for item in character.physical_appearance) else character.physical_appearance
     )
 
     return prompt

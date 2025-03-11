@@ -38,12 +38,14 @@ class TunedLlamaModelVLLM(LLM):
 
         try:
             chat_completion = self.client.chat.completions.create(
-                model="Soraki5th/auto-vn-gen-llama-8b-v2-merged-16bit",
+                model="Soraki5th/auto-vn-gen-llama-8b-v5-merged-16bit",
                 messages=copied_messages,
                 response_format={"type": "json_object"},
-                max_tokens=8192,
-                temperature=1.5,
-                top_p=0.1,
+                max_completion_tokens=8192,
+                temperature=2.0,
+                extra_body={
+                    "min_p": 0.2,
+                },
             )
 
             response = chat_completion.choices[0].message.content.strip()

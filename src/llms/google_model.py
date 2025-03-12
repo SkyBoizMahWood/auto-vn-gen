@@ -59,9 +59,6 @@ class GoogleModel(LLM):
         try:
             chat_completion = chat.send_message(message=current_message,
                                                 config=types.GenerateContentConfig(
-                                                    temperature=1.5,
-                                                    top_k=1,
-                                                    top_p=0.9,
                                                     safety_settings=[
                                                         types.SafetySetting(
                                                             category=HarmCategory.HARM_CATEGORY_HARASSMENT,

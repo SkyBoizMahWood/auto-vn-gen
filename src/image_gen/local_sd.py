@@ -2,64 +2,34 @@ import os
 
 import requests
 from loguru import logger
-
+from src.image_gen.strategies.base_strategy import ImageGenerationStrategy
+from src.image_gen.strategies.character_strategy import CharacterGenerationStrategy
+from src.image_gen.strategies.scene_strategy import SceneGenerationStrategy
 from src.image_gen.image_gen_model import ImageGenModel
-from src.prompts.image_prompts import get_negative_image_prompt
 from src.types.image_gen import ImageShape
-
 
 class LocalStableDiffusionModel(ImageGenModel):
     def __init__(self):
-        self.api_url = os.getenv("LOCAL_SD_BASE_URL")
-        self.checkpoint_character = "novaAnimeXL_ilV50.safetensors"
-        self.checkpoint_background = "crystal_clear_XL.safetensors"
+        self.text_2_img_api_url = f"{os.getenv('LOCAL_SD_BASE_URL')}/sdapi/v1/txt2img"
+        self.switch_checkpoint_api_url = f"{os.getenv('LOCAL_SD_BASE_URL')}/sdapi/v1/options"
+        self.strategy = None
         
     def set_checkpoint(self, checkpoint: str):
-        """Change checkpoint before generating image"""
         logger.debug(f"Switching to checkpoint: {checkpoint}")
-        response = requests.post(f"{self.api_url}/sdapi/v1/options", json={
+        response = requests.post(self.switch_checkpoint_api_url, json={
             "sd_model_checkpoint": checkpoint
         })
         if response.status_code == 200:
             logger.debug("Checkpoint switched successfully.")
         else:
-            logger.error("Failed to switch checkpoint.")
+            logger.error("Failed to switch checkpoint." + response.text)
 
-    def generate_image_from_text_prompt(self, prompt: str, shape: ImageShape = "square"):
-        logger.debug(f"Generating image from prompt: {prompt}")
-
-        size = {
-            "portrait": {
-                'width': 768,
-                'height': 1344
-            },
-            "landscape": {
-                'width': 1344,
-                'height': 768
-            },
-            "square": {
-                'width': 1024,
-                'height': 1024
-            }
-        }
-        
+    def generate_image_from_text_prompt(self, prompt: str, shape: ImageShape):
         if shape in ["portrait", "square"]:
-            self.set_checkpoint(self.checkpoint_character)
+            self.strategy = CharacterGenerationStrategy()
+        elif shape == "landscape":
+            self.strategy = SceneGenerationStrategy()
         else:
-            self.set_checkpoint(self.checkpoint_background)
-
-        response = requests.post(f"{self.api_url}/sdapi/v1/txt2img", json={
-            "prompt": prompt,
-            "negative_prompt": get_negative_image_prompt(),
-            "width": size[shape]["width"],
-            "height": size[shape]["height"],
-            "steps": 50,
-            "sampler_name": "Euler a",
-            "denoising_strength": 0.8,
-            "cfg_scale": 7,
-        })
-
-        return response.json().get("images")[0]
-
-    def __str__(self):
-        return "LocalStableDiffusionModel"
+            raise ValueError(f"Unsupported shape: {shape}")
+        
+        return self.strategy.generate(self, prompt, shape)

@@ -65,7 +65,7 @@ def initialize_generation(ctx: GenerationContext):
             logger.debug(f"Generating image for character: {character}")
 
             prompt = get_character_image_prompt(character)
-            image_b64 = ctx.image_gen_model.generate_image_from_text_prompt(prompt)
+            image_b64 = ctx.image_gen_model.generate_image_from_text_prompt(prompt, shape="square", )
 
             character.original_image = image_b64
 
@@ -78,7 +78,7 @@ def initialize_generation(ctx: GenerationContext):
         for scene in story_data.main_scenes:
             logger.debug(f"Generating image for scene: {scene}")
 
-            prompt = get_scene_image_prompt(scene)
+            prompt = "<lora:PE_AnimeBG:1>" + get_scene_image_prompt(scene)
             image_b64 = ctx.image_gen_model.generate_image_from_text_prompt(prompt, shape="landscape")
 
             scene.image = image_b64

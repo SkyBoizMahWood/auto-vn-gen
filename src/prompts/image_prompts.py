@@ -41,3 +41,16 @@ def get_scene_image_prompt(scene: SceneData) -> str:
     )
 
     return prompt
+
+def get_scene_negative_image_prompt() -> str:
+    negative_prompt = (
+        "EasyNegativeV2, worst quality, low quality, medium quality, "
+        "deleted, lowres, comic, bad anatomy, bad hands, text, error, "
+        "missing fingers, extra digit, fewer digits, cropped, jpeg artifacts, "
+        "signature, watermark, username, blurry, less than 5 fingers, "
+        "more than 5 fingers, bad hands, bad hand anatomy, missing fingers, "
+        "extra fingers, mutated hands, disfigured hands, deformed hands, "
+        "(double eyebrows:1.3), deformed lips, bad teeth, deformed teeth, "
+        "(multiple tails:1.1)"
+    )
+    return negative_prompt

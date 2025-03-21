@@ -8,11 +8,23 @@ from src.image_gen.strategies.scene_strategy import SceneGenerationStrategy
 from src.image_gen.image_gen_model import ImageGenModel
 from src.types.image_gen import ImageShape
 
+class StrategyContext:
+    def __init__(self, strategy: ImageGenerationStrategy = None):
+        self.strategy = strategy
+
+    def set_strategy(self, strategy: ImageGenerationStrategy):
+        self.strategy = strategy
+
+    def execute_strategy(self, model, prompt: str, shape: ImageShape):
+        if not self.strategy:
+            raise ValueError("No strategy set for image generation.")
+        return self.strategy.generate(model, prompt, shape)
+
 class LocalStableDiffusionModel(ImageGenModel):
     def __init__(self):
         self.text_2_img_api_url = f"{os.getenv('LOCAL_SD_BASE_URL')}/sdapi/v1/txt2img"
         self.switch_checkpoint_api_url = f"{os.getenv('LOCAL_SD_BASE_URL')}/sdapi/v1/options"
-        self.strategy = None
+        self.strategy_context = StrategyContext()
         
     def set_checkpoint(self, checkpoint: str):
         logger.debug(f"Switching to checkpoint: {checkpoint}")
@@ -26,10 +38,10 @@ class LocalStableDiffusionModel(ImageGenModel):
 
     def generate_image_from_text_prompt(self, prompt: str, shape: ImageShape):
         if shape in ["portrait", "square"]:
-            self.strategy = CharacterGenerationStrategy()
+            self.strategy_context.set_strategy(CharacterGenerationStrategy())
         elif shape == "landscape":
-            self.strategy = SceneGenerationStrategy()
+            self.strategy_context.set_strategy(SceneGenerationStrategy())
         else:
             raise ValueError(f"Unsupported shape: {shape}")
         
-        return self.strategy.generate(self, prompt, shape)
+        return self.strategy_context.execute_strategy(self, prompt, shape)

@@ -1,3 +1,4 @@
+from src.enums.stable_diffusion_checkpoint import StableDiffusionCheckpoint
 from src.image_gen.strategies.base_strategy import ImageGenerationStrategy
 from src.types.image_gen import ImageShape
 import requests
@@ -7,7 +8,7 @@ from src.prompts.image_prompts import get_scene_negative_image_prompt
 
 class SceneGenerationStrategy(ImageGenerationStrategy):
     def generate(self, model: "LocalStableDiffusionModel", prompt: str, shape: ImageShape) -> str:
-        model.set_checkpoint("crystalClearXL_ccxl.safetensors")
+        model.set_checkpoint(StableDiffusionCheckpoint.CRYSTAL_CLEAR_XL.filename)
         size = {
             "landscape": {"width": 1344, "height": 768}
         }

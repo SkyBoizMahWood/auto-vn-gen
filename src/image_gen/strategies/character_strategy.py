@@ -1,12 +1,12 @@
+from src.enums.stable_diffusion_checkpoint import StableDiffusionCheckpoint
 from src.image_gen.strategies.base_strategy import ImageGenerationStrategy
 from src.types.image_gen import ImageShape
 import requests
 from loguru import logger
 
-
 class CharacterGenerationStrategy(ImageGenerationStrategy):
     def generate(self, model: "LocalStableDiffusionModel", prompt: str, shape: ImageShape) -> str:
-        model.set_checkpoint("novaAnimeXL_ilV50.safetensors")
+        model.set_checkpoint(StableDiffusionCheckpoint.NOVA_ANIME_XL.filename)
         size = {
             "portrait": {"width": 768, "height": 1344},
             "square": {"width": 1024, "height": 1024}

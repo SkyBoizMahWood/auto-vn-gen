@@ -58,7 +58,7 @@ Currently used: {used_opportunity} out of {config.max_num_choices_opportunity} f
 {{
 "id": id,
 "story_so_far": story so far,
-"story": [{{"id": id signifies the order, "speaker": speaker name or "Narration", "speaker_id": id of the speaking character or -1 for narration, "scene_title": title of a current scene, "scene_id": id of the current scene, "text": dialogue or narration}}],
+"story": [{{"id": id signifies the order, "speaker": speaker name or "Narration", "speaker_id": id of the speaking character or -1 for narration, "scene_title": title of a current scene (always one of the scenes in the first story data), "scene_id": id of the current scene (always one of the scenes in the first story data), "text": dialogue or narration}}],
 "choices": [{{"id": id, "choice": choice, "description": description}}]
 }}"""
 
@@ -72,7 +72,7 @@ def get_story_based_on_selected_choice_prompt(config: GenerationConfig, story_da
 {{
 "id": id,
 "story_so_far": story so far,
-"story": [{{"id": id signifies the order, "speaker": speaker name or "Narration", "speaker_id": id of the speaking character or -1 for narration, "scene_title": title of a current scene, "scene_id": id of the current scene, "text": dialogue or narration}}],
+"story": [{{"id": id signifies the order, "speaker": speaker name or "Narration", "speaker_id": id of the speaking character or -1 for narration, "scene_title": title of a current scene (always one of the scenes in the first story data), "scene_id": id of the current scene (always one of the scenes in the first story data), "text": dialogue or narration}}],
 "choices": [{{"id": id, "choice": choice, "description": description}}]
 }}
 
@@ -96,7 +96,7 @@ def get_story_until_chapter_end_prompt(config: GenerationConfig, story_data: Sto
 {{
 "id": id,
 "story_so_far": story so far,
-"story": [{{"id": id signifies the order, "speaker": speaker name or "Narration", "speaker_id": id of the speaking character or -1 for narration, "scene_title": title of a current scene, "scene_id": id of the current scene, "text": dialogue or narration}}]
+"story": [{{"id": id signifies the order, "speaker": speaker name or "Narration", "speaker_id": id of the speaking character or -1 for narration, "scene_title": title of a current scene (always one of the scenes in the first story data), "scene_id": id of the current scene (always one of the scenes in the first story data), "text": dialogue or narration}}]
 }}
 
 # The story so far
@@ -114,7 +114,7 @@ def get_story_until_game_end_prompt(config: GenerationConfig, story_data: StoryD
 {{
 "id": id,
 "story_so_far": story so far,
-"story": [{{"id": id signifies the order, "speaker": speaker name or "Narration", "speaker_id": id of the speaking character or -1 for narration, "scene_title": title of a current scene, "scene_id": id of the current scene, "text": dialogue or narration}}],
+"story": [{{"id": id signifies the order, "speaker": speaker name or "Narration", "speaker_id": id of the speaking character or -1 for narration, "scene_title": title of a current scene (always one of the scenes in the first story data), "scene_id": id of the current scene (always one of the scenes in the first story data), "text": dialogue or narration}}],
 }}
 
 # The story so far

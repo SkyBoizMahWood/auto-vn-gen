@@ -28,14 +28,15 @@ def get_character_image_prompt(character: CharacterData) -> str:
     return prompt
 
 
-def get_scene_image_prompt(scene: SceneData) -> str:
+def get_scene_image_prompt(scene: SceneData, themes) -> str:
     prompt_template = (
-        "An image of a 2D scene artwork in a classic RPG game with a landscape scene background. "
-        "This is a scene of {title} located in {location}. The scene is {description}. No text. "
+        "An image of a 2D scene artwork in a visual novel game with a landscape scene background. "
+        "This is a scene of {title} located in {location}. Themes: {themes}. The scene is {description}. No text. "
         "One image only. Centered. No drawings. Anime-style asset.")
 
     prompt = prompt_template.format(
         title=scene.title,
+        themes=themes,
         location=scene.location,
         description=scene.description
     )

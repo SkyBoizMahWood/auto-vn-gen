@@ -33,3 +33,5 @@ REM python main.py generate-story --num-chapters 3 --min-num-choices 2 --max-num
 REM python main.py generate-story --num-chapters 3 --min-num-choices 2 --max-num-choices 3 --min-num-choices-opportunity 1 --max-num-choices-opportunity 1 --themes "adventure" --themes "high-fantasy" --themes "science fiction"
 
 REM python main.py generate-story --num-chapters 3 --min-num-choices 2 --max-num-choices 3 --min-num-choices-opportunity 1 --max-num-choices-opportunity 1 --themes "Rewriting Fate" --themes "The Fragility of Memory" --themes "The Weight of Regret"
+
+REM python main.py batch-generation --themes "Romance, Mystery, Fantasy, Sci-fi" --min-num-choices-opportunity 1 --max-num-choices-opportunity 1 --n-stories 5

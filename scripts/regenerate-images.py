@@ -28,8 +28,9 @@ def _run_regenerate_images(session, story_id: str, for_characters: bool, for_sce
             prompt = get_character_image_prompt(character_data)
             image = img_gen.generate_image_from_text_prompt(prompt)
             character['original_image'] = image
-            image_b64 = get_image_from_base64(image)
-            character['image'] = get_base64_from_image(bria.remove_background(image_b64))
+            # image_b64 = get_image_from_base64(image)
+            # character['image'] = get_base64_from_image(bria.remove_background(image_b64))
+            character['image'] = image
 
         session.run("MATCH (n: StoryData {id: $id}) SET n.main_characters = $main_characters",
                     id=result.get('n').get('id'),

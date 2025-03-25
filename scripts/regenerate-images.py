@@ -26,10 +26,11 @@ def _run_regenerate_images(session, story_id: str, for_characters: bool, for_sce
         for character in main_characters:
             character_data = CharacterData.from_json(character)
             prompt = get_character_image_prompt(character_data)
-            image = img_gen.generate_image_from_text_prompt(prompt)
+            image = img_gen.generate_image_from_text_prompt(prompt, shape="square")
             character['original_image'] = image
-            image_b64 = get_image_from_base64(image)
-            character['image'] = get_base64_from_image(bria.remove_background(image_b64))
+            # image_b64 = get_image_from_base64(image)
+            # character['image'] = get_base64_from_image(bria.remove_background(image_b64))
+            character['image'] = image
 
         session.run("MATCH (n: StoryData {id: $id}) SET n.main_characters = $main_characters",
                     id=result.get('n').get('id'),
@@ -40,7 +41,7 @@ def _run_regenerate_images(session, story_id: str, for_characters: bool, for_sce
         for scene in main_scenes:
             scene_data = SceneData.from_json(scene)
             prompt = get_scene_image_prompt(scene_data)
-            image = img_gen.generate_image_from_text_prompt(prompt)
+            image = img_gen.generate_image_from_text_prompt(prompt, shape="landscape")
             scene['image'] = image
 
         session.run("MATCH (n: StoryData {id: $id}) SET n.main_scenes = $main_scenes",

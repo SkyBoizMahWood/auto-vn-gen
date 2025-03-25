@@ -38,7 +38,7 @@ class TunedLlamaModelVLLM(LLM):
 
         try:
             chat_completion = self.client.chat.completions.create(
-                model="Soraki5th/auto-vn-gen-llama-8b-v5-merged-16bit",
+                model=os.getenv("TUNED_LLAMA_MODEL"),
                 messages=copied_messages,
                 response_format={"type": "json_object"},
                 max_completion_tokens=8192,

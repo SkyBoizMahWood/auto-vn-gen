@@ -12,13 +12,13 @@ class CharacterGenerationStrategy(ImageGenerationStrategy):
             "square": {"width": 1024, "height": 1024}
         }
         response = requests.post(model.text_2_img_api_url, json={
-            "prompt": f"Character: {prompt}",
-            "negative_prompt": "blurry, low quality, bad anatomy",
+            "prompt": f"masterpiece, best quality, amazing quality, very aesthetic, high resolution, ultra-detailed, absurdres, newest, scenery, Character: {prompt}, BREAK, depth of field, volumetric lighting",
+            "negative_prompt": "modern, recent, old, oldest, cartoon, graphic, text, painting, crayon, graphite, abstract, glitch, deformed, mutated, ugly, disfigured, long body, lowres, bad anatomy, bad hands, missing fingers, extra digits, fewer digits, cropped, very displeasing, (worst quality, bad quality:1.2), bad anatomy, sketch, jpeg artifacts, signature, watermark, username, signature, simple background, conjoined,bad ai-generated",
             "width": size[shape]["width"],
             "height": size[shape]["height"],
-            "steps": 40,
+            "steps": 25,
             "sampler_name": "Euler a",
-            "cfg_scale": 7,
+            "cfg_scale": 5,
             "denoising_strength": 0.7
         })
         if response.status_code == 200:

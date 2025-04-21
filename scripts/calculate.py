@@ -49,8 +49,8 @@ def cost_per_story(story_id: str):
             "completion": 0 / 10e5
         },
         'gemini-1.5-flash': {
-            "prompt": 0.15 / 10e5,
-            "completion": 0.60 / 10e5
+            "prompt": 0.075 / 10e5,
+            "completion": 0.30 / 10e5
         },
         'gemini-2.0-flash-exp': {
             "prompt": 0.10 / 10e5,
@@ -64,6 +64,10 @@ def cost_per_story(story_id: str):
             "prompt": 0.10 / 10e5,
             "completion": 0.40 / 10e5
         },
+        'gemini-2.0-flash-thinking-exp': {
+            "prompt": 0.10 / 10e5,
+            "completion": 0.40 / 10e5
+        },
         'gpt-3.5-turbo-0125': {
             "prompt": 0.5 / 10e5,
             "completion": 1.5 / 10e5
@@ -71,6 +75,10 @@ def cost_per_story(story_id: str):
         'gpt-4-0125-preview': {
             "prompt": 10 / 10e5,
             "completion": 30 / 10e5
+        },
+        'tuned-llama-8b-vllm': {
+            "prompt": 0.03 / 10e5,
+            "completion": 0.05 / 10e5
         }
     }
 

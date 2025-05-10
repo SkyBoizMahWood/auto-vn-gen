@@ -477,10 +477,8 @@ async def regenerate_story_images_endpoint(story_id: str, payload: ImageRegenera
 async def delete_story_data_endpoint(story_id: str):
     """Deletes a story and its associated data from the database."""
     try:
-        result = delete_story_data_logic(story_id)
-        if result.get("nodes_deleted_story_data", 0) == 0 and result.get("nodes_deleted_story_chunk", 0) == 0:
-            raise HTTPException(status_code=404, detail=f"Story with ID '{story_id}' not found or already pruned.")
-        return {"message": f"Story {story_id} and associated data deleted successfully.", "details": result}
+        delete_story_data_logic(story_id)
+        return {"message": f"Story {story_id} and associated data deleted successfully."}
     except HTTPException: # Re-raise HTTPException if we set it above
         raise
     except Exception as e:

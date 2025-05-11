@@ -9,6 +9,11 @@ from loguru import logger
 import os
 import json
 from datetime import datetime
+from fastapi.responses import StreamingResponse
+import asyncio
+from queue import SimpleQueue
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.concurrency import run_in_threadpool
 
 # Import necessary functions from your existing codebase
 from src.batch_generation.core import (
@@ -282,12 +287,31 @@ app = FastAPI(
     version="0.1.0"
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3003", "https://glowworm-endless-gull.ngrok-free.app"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Load environment variables and set up logging
 load_dotenv()
 logs_dir = Path("logs")
 logs_dir.mkdir(exist_ok=True) # Ensure logs directory exists
 logger.add(logs_dir / "api_{time}.log", rotation="1 day", retention="7 days")
 
+log_queue = SimpleQueue()
+
+class QueueLogHandler:
+    def write(self, message):
+        if message.strip():
+            log_queue.put(message)
+    def flush(self):
+        pass
+
+# Add this handler to loguru
+logger.add(QueueLogHandler(), format="{message}", enqueue=False)
 
 # --- Pydantic Models for API ---
 class StoryGenerationRequest(BaseModel):
@@ -356,9 +380,8 @@ async def generate_story_endpoint(payload: StoryGenerationRequest, approach: Gen
         )
         logger.info(f"API - Generation config: {config}, Approach: {approach}")
         
-        # Assuming run_generation_with returns a story object with an 'id' attribute
-        # This part might need adjustment based on actual return type of run_generation_with
-        story_result = run_generation_with(config, approach)
+        # Run the blocking function in a thread
+        story_result = await run_in_threadpool(run_generation_with, config, approach)
         story_id = getattr(story_result, 'id', None) # Safely get id
 
         return StoryGenerationResponse(message="Story generation initiated successfully.", story_id=story_id)
@@ -484,6 +507,16 @@ async def delete_story_data_endpoint(story_id: str):
     except Exception as e:
         logger.exception(f"Error deleting story {story_id}")
         raise HTTPException(status_code=500, detail=f"Error deleting story: {str(e)}")
+
+@app.get("/logs/stream", tags=["Logs"])
+async def stream_logs():
+    async def event_generator():
+        while True:
+            while log_queue.empty():
+                await asyncio.sleep(0.1)
+            message = log_queue.get()
+            yield f"data: {message}\n\n"
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 # To run this (save as api.py in auto-vn-gen directory):
 # Ensure you have fastapi and uvicorn installed: pip install fastapi uvicorn[standard]

@@ -26,7 +26,7 @@ class GoogleModel(LLM):
         self.api_keys = api_keys_str.split(",") if api_keys_str else []
         if not self.api_keys:
             raise ValueError("GOOGLE_AI_API_KEY environment variable not set or empty")
-        logger.debug(f"Google API keys: {self.api_keys}")
+        # logger.debug(f"Google API keys: {self.api_keys}")
         self.current_key_index = 0
         self.model_name = model_name
         self.client = genai.Client(

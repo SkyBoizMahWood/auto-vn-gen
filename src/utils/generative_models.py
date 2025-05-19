@@ -21,7 +21,8 @@ MAX_TOKENS = {
     'gemini-2.0-flash': 1048576,
     'gemini-2.0-flash-001': 1048576,
     'gemini-2.0-flash-thinking-exp': 1048576,
-    'gemini-2.5-pro-exp-03-25': 1000000,
+    'gemini-2.5-pro-preview-05-06': 1048576,
+    'gemini-2.5-flash-preview-04-17': 1048576,
     'claude-3-opus-20240229': 200000,
     'claude-3-sonnet-20240229': 200000,
     'claude-2.1': 200000,
@@ -34,7 +35,7 @@ def get_generation_model(model_name: str, seed: Optional[int]) -> LLM:
     if model_name in ["gpt-3.5-turbo-0125", "gpt-4-0125-preview"]:
         max_tokens = MAX_TOKENS[model_name]
         return OpenAIModel(model_name, max_tokens, seed)
-    elif model_name in ["gemini-1.0-pro", "gemini-1.5-flash", "gemini-2.0-flash-exp", "gemini-2.0-flash", "gemini-2.0-flash-001", "gemini-2.0-flash-thinking-exp", "gemini-2.5-pro-exp-03-25"]:
+    elif model_name in ["gemini-1.0-pro", "gemini-1.5-flash", "gemini-2.0-flash-exp", "gemini-2.0-flash", "gemini-2.0-flash-001", "gemini-2.0-flash-thinking-exp", "gemini-2.5-pro-preview-05-06", "gemini-2.5-flash-preview-04-17"]:
         if seed is not None:
             logger.warning(f"Seed is set for model {model_name}, but it will be ignored.")
         max_tokens = MAX_TOKENS[model_name]

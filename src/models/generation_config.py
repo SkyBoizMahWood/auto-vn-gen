@@ -1,6 +1,5 @@
 from typing_extensions import List, Optional
 
-
 class GenerationConfig:
     def __init__(self, min_num_choices: int, max_num_choices: int, min_num_choices_opportunity: int,
                  max_num_choices_opportunity: int, game_genre: str, themes: List[str], num_chapters: int,

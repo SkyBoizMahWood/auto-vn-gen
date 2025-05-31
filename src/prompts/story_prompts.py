@@ -23,22 +23,22 @@ def get_plot_prompt(config: GenerationConfig) -> str:
 
     return f"""Write a game story synopsis. Then generate 1 story beginning, {config.num_endings} possible endings, {config.num_main_characters} main characters, and {config.num_main_scenes} main scenes. There are a total of {config.num_chapters} chapters. {JSON_MAGIC_PHRASE}
 
-# Output format
-{{
-"title": game title,
-"genre": game genre,
-"themes": [words],
-"main_scenes": [{{"id": id (integer), "title": location name, "location": where is this place, "description": describe location}}].
-"main_characters": [{{"id": id (integer), "first_name": first name, "last_name": last name ("" if unknown), "species": species, "age": exact age or description, "gender": gender of the character, "role": role of the character, "background": background story, "place_of_birth": location, "physical_appearance": [list of details]}}]
-"synopsis": synopsis,
-"chapter_synopses": [{{"chapter": chapter_number (integer), "synopsis": synopsis, "character_ids": id of featured characters in this chapter, "scene_ids": id of featured scenes in this chapter}}]
-"beginning": beginning of the story,
-"endings": [{{"id": id (integer), "ending": ending}}]
-}}
+            # Output format
+            {{
+            "title": game title,
+            "genre": game genre,
+            "themes": [words],
+            "main_scenes": [{{"id": id, "title": location name, "location": where is this place, "description": describe location}}].
+            "main_characters": [{{"id": id, "first_name": first name, "last_name": last name, "species": species, "age": exact age or description, "gender": gender of the character, "role": role of the character, "background": background story, "place_of_birth": location, "physical_appearance": [details]}}]
+            "synopsis": synopsis,
+            "chapter_synopses": [{{"chapter": chapter_number, "synopsis": synopsis, "character_ids": id of featured characters in this chapter, "scene_ids": id of featured scenes in this chapter}}]
+            "beginning": beginning of the story,
+            "endings": [{{"id": id, "ending": ending}}]
+            }}
 
-# Game information
-Game genre: {config.game_genre}
-Themes: {config.get_themes_str()}"""
+            # Game information
+            Game genre: {config.game_genre}
+            Themes: {config.get_themes_str()}"""
 
 
 def get_story_until_choices_opportunity_prompt(config: GenerationConfig, story_data: StoryData, num_choices: int,

@@ -21,7 +21,7 @@ class SceneGenerationStrategy(ImageGenerationStrategy):
             "cfg_scale": 8,
             "denoising_strength": 0.85,
             "seed": 1993370736,
-        })
+        }, timeout=100000)
         if response.status_code == 200:
             logger.debug("Scene image generated successfully.")
             return response.json().get("images")[0]

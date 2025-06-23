@@ -104,17 +104,17 @@ python main.py batch-generation \
 
 #### Regenerate Images
 ```bash
-python scripts/regenerate-images.py [story_id] --for-characters --for-scenes
+python -m scripts.regenerate-images [story_id] --for-characters --for-scenes
 ```
 
 #### Calculate Story Costs
 ```bash
-python scripts/calculate.py cost-per-story [story_id]
+python -m scripts.calculate.py cost-per-story [story_id]
 ```
 
 #### Delete Story
 ```bash
-python scripts/prune.py --story-id [story_id]
+python -m scripts.prune.py --story-id [story_id]
 ```
 
 ## Output Structure

@@ -12,15 +12,16 @@ class SceneGenerationStrategy(ImageGenerationStrategy):
             "landscape": {"width": 1344, "height": 768}
         }
         response = requests.post(model.text_2_img_api_url, json={
-            "prompt": f"<lora:niji_vn_bg:1>  Scene: {prompt}",
+            "prompt": f"<lora:niji_vn_bg:1>, niji_vn_bg, no humans,\n{prompt}",
             "negative_prompt": get_scene_negative_image_prompt(),
             "width": size[shape]["width"],
             "height": size[shape]["height"],
-            "steps": 50,
-            "sampler_name": "DPM++ 2M Karras",
+            "steps": 20,
+            "sampler_name": "DPM++ 2M",
+            "scheduler": "Karras",
             "cfg_scale": 8,
             "denoising_strength": 0.85,
-            "seed": 1993370736,
+            "seed": -1,
         }, timeout=100000)
         if response.status_code == 200:
             logger.debug("Scene image generated successfully.")

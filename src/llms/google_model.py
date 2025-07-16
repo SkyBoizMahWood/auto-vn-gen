@@ -23,6 +23,7 @@ class GoogleModel(LLM):
     def __init__(self, model_name: str, max_tokens: int = 32768):
         super().__init__(max_tokens)
         api_keys_str = os.environ.get("GOOGLE_AI_API_KEY", "")
+        self.thinking_budget = -1 if (os.environ.get("THINKING_MODEL", "false").lower() == "true") else 0
         self.api_keys = api_keys_str.split(",") if api_keys_str else []
         if not self.api_keys:
             raise ValueError("GOOGLE_AI_API_KEY environment variable not set or empty")
@@ -45,6 +46,7 @@ class GoogleModel(LLM):
 
     def generate_content(self, ctx: GenerationContext, messages: ConversationHistory) -> tuple[str, dict]:
         logger.debug(f"Starting chat completion with model: {self.model_name}")
+        logger.debug(f"Thinking budget: {self.thinking_budget}")
 
         copied_messages = copy.deepcopy(messages)
         copied_messages = self.rolling_history(copied_messages)
@@ -59,6 +61,7 @@ class GoogleModel(LLM):
         try:
             chat_completion = chat.send_message(message=current_message,
                                                 config=types.GenerateContentConfig(
+                                                    thinking_config=types.ThinkingConfig(thinking_budget=self.thinking_budget),
                                                     safety_settings=[
                                                         types.SafetySetting(
                                                             category=HarmCategory.HARM_CATEGORY_HARASSMENT,

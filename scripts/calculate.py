@@ -72,6 +72,14 @@ def cost_per_story(story_id: str):
             "prompt": 0.15 / 10e5,
             "completion": 3.50 / 10e5
         },
+        'gemini-2.5-pro': {
+            "prompt": 1.25 / 10e5,
+            "completion": 10.00 / 10e5
+        },
+        'gemini-2.5-flash': {
+            "prompt": 0.30 / 10e5,
+            "completion": 2.50 / 10e5
+        },
         'gpt-3.5-turbo-0125': {
             "prompt": 0.5 / 10e5,
             "completion": 1.5 / 10e5
